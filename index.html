@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>getPath</title>
+</head>
+<body>
+  <div>
+    <ul>
+      <li class="item">Item 1</li>
+      <li id="target" class="item">Item 2</li>
+      <li class="item">Item 3</li>
+    </ul>
+  </div>
+  <script>
+    function getPath(element) {
+      function getElementIndex(element) {
+        const siblings = Array.from(element.parentNode.children);
+        return siblings.indexOf(element) + 1;
+      }
+
+      let path = [];
+
+      while (element && element.nodeType === Node.ELEMENT_NODE) {
+        let selector = element.tagName.toLowerCase();
+
+        if (element.id) {
+          selector += `#${element.id}`;
+          path.unshift(selector);
+          break;
+        }
+
+        if (element.className) {
+          const classes = element.className.trim().split(/\s+/);
+          selector += `.${classes.join('.')}`;
+        }
+
+        const index = getElementIndex(element);
+        if (element.parentNode && element.parentNode.children.length > 1) {
+          selector += `:nth-child(${index})`;
+        }
+
+        path.unshift(selector);
+        element = element.parentNode;
+      }
+
+      return path.join(' > ');
+    }
+
+    const element = document.getElementById('target');
+    const uniqueSelector = getPath(element);
+
+    console.log("Уникальный селектор для элемента:", uniqueSelector);
+  </script>
+</body>
+</html>
